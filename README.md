@@ -2,6 +2,9 @@
 
 Browser extension that saves selected text snippets and lets you search them using on-device semantic embeddings. The model is downloaded locally after cloning (not stored in Git), so no API token is required and nothing is sent to external services.
 
+## Experimental
+This extension is experimental because it runs a local embedding model inside the browser. It uses the ONNX version of `Xenova/paraphrase-multilingual-MiniLM-L12-v2` through Transformers.js + ONNX Runtime Web (WASM). Loading the model can consume significant memory: expect roughly ~450–650 MB steady-state with peaks that can approach ~1 GB during first load or initial inference. This can vary by browser version, device RAM, and allocator behavior.
+
 ## Features
 - Save selected text from any page using the context menu.
 - Add snippets manually from the popup.
