@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Snippet Manager</title>
+  <style>
+    :root {
+      --bg: #f6efe7;
+      --bg-2: #f2dcc2;
+      --card: #fffaf4;
+      --ink: #1d1914;
+      --muted: #6f6458;
+      --accent: #c85a1a;
+      --accent-2: #0f6b4f;
+      --stroke: #e6d4c2;
+      --shadow: 0 16px 40px rgba(29, 25, 20, 0.18);
+      --radius: 16px;
+      --radius-sm: 12px;
+      --font-display: "Baskerville", "Palatino Linotype", "Book Antiqua", serif;
+      --font-body: "Avenir Next", "Gill Sans", "Trebuchet MS", "Helvetica", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 420px;
+      min-width: 420px;
+      margin: 0;
+      background: radial-gradient(120% 120% at 10% 0%, #fdf7f0 0%, var(--bg) 45%, #efe2d4 100%);
+      color: var(--ink);
+      font-family: var(--font-body);
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      filter: blur(0);
+      opacity: 0.35;
+      z-index: 0;
+    }
+
+    body::before {
+      background: radial-gradient(circle, rgba(200, 90, 26, 0.4), transparent 70%);
+      top: -60px;
+      right: -60px;
+    }
+
+    body::after {
+      background: radial-gradient(circle, rgba(15, 107, 79, 0.4), transparent 70%);
+      bottom: -80px;
+      left: -80px;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 16px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: appIn 320ms ease-out;
+    }
+
+    @keyframes appIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), #f1b07f);
+      color: #fff7f0;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 8px 20px rgba(200, 90, 26, 0.35);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .storage-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .storage-label {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    progress {
+      width: 100%;
+      height: 10px;
+      border: none;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #f0e4d9;
+    }
+
+    progress::-webkit-progress-bar {
+      background: #f0e4d9;
+      border-radius: 999px;
+    }
+
+    progress::-webkit-progress-value {
+      background: linear-gradient(90deg, var(--accent), #f1b07f);
+      border-radius: 999px;
+    }
+
+    progress::-moz-progress-bar {
+      background: linear-gradient(90deg, var(--accent), #f1b07f);
+      border-radius: 999px;
+    }
+
+    .search-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .search-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    #search-input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background: #fffdfb;
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--ink);
+      transition: border 180ms ease, box-shadow 180ms ease;
+    }
+
+    #search-input:focus {
+      outline: none;
+      border-color: rgba(200, 90, 26, 0.6);
+      box-shadow: 0 0 0 3px rgba(200, 90, 26, 0.18);
+    }
+
+    #search-status {
+      font-size: 12px;
+      min-height: 16px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 107, 79, 0.08);
+      color: var(--accent-2);
+      width: fit-content;
+      max-width: 100%;
+      transition: opacity 180ms ease;
+    }
+
+    #search-status:empty {
+      opacity: 0;
+    }
+
+    #search-status[data-state="loading"] {
+      background: rgba(200, 90, 26, 0.12);
+      color: var(--accent);
+    }
+
+    #search-status[data-state="error"] {
+      background: rgba(176, 0, 32, 0.1);
+      color: #b00020;
+    }
+
+    .snippets-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .snippets-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+    }
+
+    #snippets-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    #snippets-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #snippets-list::-webkit-scrollbar-thumb {
+      background: rgba(111, 100, 88, 0.35);
+      border-radius: 999px;
+    }
+
+    .snippet {
+      border: 1px solid rgba(230, 212, 194, 0.9);
+      border-radius: var(--radius-sm);
+      padding: 12px 12px 10px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 8px 16px rgba(29, 25, 20, 0.08);
+      animation: riseIn 360ms ease-out both;
+      animation-delay: var(--delay, 0ms);
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .snippet-text {
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--ink);
+      word-wrap: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .snippet-score {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .snippet-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(29, 25, 20, 0.15);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #f1b07f);
+      color: #fffaf4;
+    }
+
+    .btn-danger {
+      background: #f6e1dd;
+      color: #7a2216;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--stroke);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      padding: 6px 12px;
+    }
+
+    .empty-state {
+      border: 1px dashed rgba(200, 90, 26, 0.35);
+      border-radius: var(--radius-sm);
+      padding: 18px 14px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255, 250, 244, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div>
+          <div class="brand-title">Snippet Vault</div>
+          <div class="brand-subtitle">Collect highlights in one click</div>
+        </div>
+      </div>
+      <button type="button" id="clear-all" class="btn btn-ghost">Clear all</button>
+    </header>
+
+    <section class="panel">
+      <div class="storage-row">
+        <span class="storage-label">Storage</span>
+        <span><span id="storage-used">0</span> / 100 KB</span>
+      </div>
+      <progress id="storage-bar" value="0" max="100"></progress>
+    </section>
+
+    <section class="panel search-panel">
+      <label class="search-label" for="search-input">Search snippets</label>
+      <input type="text" id="search-input" placeholder="Type to rank by meaning...">
+      <div id="search-status" data-state="idle"></div>
+    </section>
+
+    <section class="panel">
+      <div class="snippets-header">
+        <div class="snippets-title">Saved</div>
+      </div>
+      <div id="snippets-list"></div>
+    </section>
+
+    <div class="hint">Tip: highlight text, right-click, and choose "Save as Snippet".</div>
+  </div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

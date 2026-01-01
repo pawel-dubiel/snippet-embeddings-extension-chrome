@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Snippet Manager",
+  "version": "1.0",
+  "description": "Manage text snippets from any website",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "contextMenus",
+    "notifications",
+    "offscreen"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Snippet Manager"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}

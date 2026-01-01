@@ -1,0 +1,6 @@
+.DS_Store
+.hf_pkg/
+.ort_pkg/
+huggingface-transformers-*.tgz
+onnxruntime-web-*.tgz
+models/
