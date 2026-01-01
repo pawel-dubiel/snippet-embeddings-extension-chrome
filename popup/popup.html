@@ -204,6 +204,11 @@
       box-shadow: 0 6px 14px rgba(29, 25, 20, 0.12);
     }
 
+    .tab-button:focus-visible {
+      outline: 2px solid rgba(200, 90, 26, 0.6);
+      outline-offset: 2px;
+    }
+
     .tab-count {
       display: inline-flex;
       min-width: 22px;
@@ -332,6 +337,33 @@
       overflow: hidden;
     }
 
+    .snippet-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .snippet-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(200, 90, 26, 0.1);
+      color: var(--accent);
+    }
+
+    .snippet-badge--sync {
+      background: rgba(15, 107, 79, 0.12);
+      color: var(--accent-2);
+    }
+
     .snippet-score {
       font-size: 11px;
       color: var(--accent);
@@ -363,6 +395,11 @@
     .btn:active {
       transform: translateY(0);
       box-shadow: none;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid rgba(200, 90, 26, 0.5);
+      outline-offset: 2px;
     }
 
     .btn-primary {

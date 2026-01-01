@@ -42,7 +42,7 @@ Bundled into the extension so it works offline:
 
 ## Data Storage
 - Snippets (local tab): `chrome.storage.local`
-- Snippets (synced tab): `chrome.storage.sync`
+- Snippets (synced tab): `chrome.storage.sync` (quota-limited)
 - Embeddings cache: `chrome.storage.local`
 
 ## Load the Extension
